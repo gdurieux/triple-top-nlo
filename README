@@ -4,11 +4,11 @@ Bash scripts to compute triple top-quark production (tttj and tttw) at NLO in QC
 
 The fact ttt(w>jj) looks just like an extra parton emission from tttj, and that ttt(t>bw) looks just like an extra parton emission from tttw, demands a substraction scheme at NLO in the five flavour scheme (5FS) and already at LO in the 4FS for tttw.
 
-So-called DR1 "diagram removal" is implemented for this purpose, by removing unwanted resonant diagrams from the set of real radiations, though specific patches of the MG5_aMC output.
+So-called DR1 "diagram removal" is implemented for this purpose, by removing unwanted resonant diagrams from the set of real radiations, though specific patches of the MG5_aMC outputs.
 
 The 5FS is adopted for NLO computations. At LO, the 4FS is also amenable and used for comparison.
 
-Plots are provided as examples, displaying scale variation for two different central choices (HT/2 and sum[masses]).
+Plots are provided as examples, displaying scale variation for two different central choices (HT/2 and sum[masses]), in 13 TeV pp collisions.
 
 Prerequisites:
 - MG5_aMC_v3.4.1, lhapdf6, and their dependencies (see scripts for commented out installation code)
@@ -21,9 +21,9 @@ To produce the tttbarj plots:
 
 For tttbarW-, use the two gen_tttwm*.sh scripts instead.
 
-Scripts are also also provided to run ttbartbarj (tttjp.sh) and ttbartbarW+ (tttwp.sh) at NLO in the 5FS.
+Scripts are also also provided to run ttbartbarj (gen_tttjp.sh) and ttbartbarW+ (gen_tttwp.sh) at NLO in the 5FS.
 
-Numerical results for the four processes and factors of two variation around a HT/2 dynamical scale are (see also sample outputs at the end of each script file, PDF uncertainties are from NNPDF23_nlo_as_0118 replicas):
+Numerical results for the four processes in 13 TeV pp collisions, with factor-of-two variations around a HT/2 dynamical scale are (see also sample outputs at the end of each script file, PDF uncertainties are from NNPDF23_nlo_as_0118 replicas):
 
 tttjm:
 	NLO: 0.44  fb +13% -11% (scale) +1.6% -1.6% (pdf)
