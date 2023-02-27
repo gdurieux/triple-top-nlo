@@ -30,20 +30,7 @@ echo "--- Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 MODEL=loop_qcd_qed_sm-with_b_mass
 
 
-### generate
-date
-echo "set auto_convert_model T          # convert model to python3 automatically
-import model ${MODEL}
-set complex_mass_scheme True            # not actually needed if resonance width hardcoded
-generate p p > t t t~ b~ W-
-output ${OUTDIR}
-y# just in case some installation or overwritting is needed
-" > ${OUTDIR}.cmd
-time $MG -f ${OUTDIR}.cmd
-
-
-### apply patch
-date
+### get patch
 PATCH="--- ${OUTDIR}/SubProcesses/P1_gg_tttxbxwm/matrix1_orig.f	2023-02-23 18:16:02.000000001 +0100
 +++ ${OUTDIR}/SubProcesses/P1_gg_tttxbxwm/matrix1_orig.f	2023-02-23 18:16:02.000000001 +0100
 @@ -685,7 +685,7 @@
@@ -67,7 +54,23 @@ PATCH="--- ${OUTDIR}/SubProcesses/P1_gg_tttxbxwm/matrix1_orig.f	2023-02-23 18:16
        CALL FFV1_0(W(1,14),W(1,4),W(1,13),GC_11,AMP(6))
  C     Amplitude(s) for diagram number 7"
 
-time patch -p0 <<< "$PATCH"
+
+for FIXEDSCALE in False True ; do
+
+### generate and apply patch
+echo "set auto_convert_model T          # convert model to python3 automatically
+import model ${MODEL}
+set complex_mass_scheme True            # not actually needed if resonance width hardcoded
+generate p p > t t t~ b~ W-
+output ${OUTDIR}
+y# just in case some installation or overwritting is needed
+" > ${OUTDIR}.cmd
+if [[ ! -d "${OUTDIR}" ]] ; then
+	date
+	echo "--- Generate, output and patch"
+	time $MG -f ${OUTDIR}.cmd
+	time patch -p0 <<< "$PATCH"
+fi
 
 
 ### launch
@@ -89,8 +92,8 @@ set lhaid 244600
 set WW   0.  # 2.084650                  # irrelevant at LO
 set WT   0.  # 1.36728
 set dynamical_scale_choice 3             # -1 and 3 are the same at MG5_aMC but not in MG5_LO
-set fixed_ren_scale False                # those two actually determine fixed vs dyn scale
-set fixed_fac_scale False                # those two actually determine fixed vs dyn scale
+set fixed_ren_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
+set fixed_fac_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
 set scale 600.3                          # 3*mt+mw = 3*173.3+80.419 = 600.3 GeV
 set dsqrt_q2fact1 600.3
 set dsqrt_q2fact2 600.3
@@ -102,6 +105,8 @@ set systematics_arguments ['--mur=0.125,0.149,0.177,0.21,0.25,0.297,0.354,0.42,0
 time $MG -f ${OUTDIR}.cmd
 
 date
+
+done
 
 ### results should be the following, for dynamical scale 3:
 #  === Results Summary for run: run_09 tag: tag_1 ===

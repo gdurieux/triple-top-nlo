@@ -1,9 +1,18 @@
 #!/usr/bin/python3
 
 # e.g.:
+# ./read_syslog.py tttjm-ht2.pdf ./gen_tttjm_cs8/Events/run_10/parton_systematics.log ./gen_tttjm_cs8/Events/run_11_LO/parton_systematics.log ./gen_tttjm_4fs_lo/Events/run_06/parton_systematics.log
+
 # ./read_syslog.py tttjm-3mt.pdf ./gen_tttjm_cs8/Events/run_13/parton_systematics.log ./gen_tttjm_cs8/Events/run_14_LO/parton_systematics.log ./gen_tttjm_4fs_lo/Events/run_08/parton_systematics.log
 
 # ./read_syslog.py tttwm-ht2.pdf ./gen_tttwm/Events/run_08/parton_systematics.log  ./gen_tttwm/Events/run_09_LO/parton_systematics.log ./gen_tttwm_4fs_lo/Events/run_09/parton_systematics.log
+
+# ./read_syslog.py tttwm-3mtmw.pdf ./gen_tttwm/Events/run_10/parton_systematics.log  ./gen_tttwm/Events/run_11_LO/parton_systematics.log ./gen_tttwm_4fs_lo/Events/run_10/parton_systematics.log
+
+# .read_syslog.py tttjp-ht2.pdf ./gen_tttjp/Events/run_01/parton_systematics.log ./gen_tttjp/Events/run_02_LO/parton_systematics.log
+# ./read_syslog.py tttjp-3mt.pdf ./gen_tttjp/Events/run_03/parton_systematics.log ./gen_tttjp/Events/run_04_LO/parton_systematics.log
+# ./read_syslog.py tttwp-3mtmw.pdf ./gen_tttwp/Events/run_01/parton_systematics.log ./gen_tttwp/Events/run_02_LO/parton_systematics.log
+# ./read_syslog.py tttwp-ht2.pdf ./gen_tttwp/Events/run_03/parton_systematics.log ./gen_tttwp/Events/run_04_LO/parton_systematics.log
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -86,4 +95,5 @@ if len(sys.argv)==5:
     show(Z,show=False,subs=False,fs=' 4FS')
     
 plt.savefig(out)
+#savefig(out)
 plt.show()

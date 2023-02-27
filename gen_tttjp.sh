@@ -30,20 +30,7 @@ echo "--- Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 MODEL=loop_qcd_qed_sm                   # should automatically use 5FS
 
 
-### generate
-date
-echo "set auto_convert_model T          # convert model to python3 automatically
-import model ${MODEL}
-set complex_mass_scheme True            # not actually needed if resonance width hardcoded
-generate p p > t t~ t~ j [QCD]
-output ${OUTDIR}
-y# just in case some installation or overwritting is needed
-" > ${OUTDIR}.cmd
-time $MG -f ${OUTDIR}.cmd
-
-
-### apply patch
-date
+### get patch
 PATCH="--- ${OUTDIR}/SubProcesses/P0_dbx_ttxtxu/matrix_2.f     2023-02-21 19:03:36.000000001 +0100
 +++ ${OUTDIR}/SubProcesses/P0_dbx_ttxtxu/matrix_2.f     2023-02-21 19:03:36.000000001 +0100
 @@ -475,7 +475,7 @@
@@ -89,7 +76,24 @@ PATCH="--- ${OUTDIR}/SubProcesses/P0_dbx_ttxtxu/matrix_2.f     2023-02-21 19:03:
  C     Amplitude(s) for diagram number 3
        CALL FFV2_0(W(1,5),W(1,13),W(1,10),GC_124,AMP(3))"
 
-time patch -p0 <<< "$PATCH"
+
+for FIXEDSCALE in False True ; do
+for ORDER in NLO LO ; do
+
+### generate and apply patch
+echo "set auto_convert_model T          # convert model to python3 automatically
+import model ${MODEL}
+set complex_mass_scheme True            # not actually needed if resonance width hardcoded
+generate p p > t t~ t~ j [QCD]
+output ${OUTDIR}
+y# just in case some installation or overwritting is needed
+" > ${OUTDIR}.cmd
+if [[ ! -d "${OUTDIR}" ]] ; then
+	date
+	echo "--- Generate, output and patch"
+	time $MG -f ${OUTDIR}.cmd
+	time patch -p0 <<< "$PATCH"
+fi
 
 
 ### launch
@@ -97,7 +101,7 @@ date
 echo "launch ${OUTDIR}
 fixed_order=OFF
 shower=OFF
-order=NLO
+order=$ORDER
 done
 set aEWM1 1.289300e+02
 set MZ 9.118800e+01
@@ -114,8 +118,8 @@ set lhaid 244600
 set WW 2.084650                          # don't set WW=0 unless it is hardcoded in patch
 set WT   0.  # 1.36728                   # anyway set to zero by MG as final state particle
 set dynamical_scale_choice 3             # -1 and 3 are the same at MG5_aMC but not in MG5_LO
-set fixed_ren_scale False                # those two actually determine fixed vs dyn scale
-set fixed_fac_scale False                # those two actually determine fixed vs dyn scale
+set fixed_ren_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
+set fixed_fac_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
 set mur_ref_fixed 519.9                  # 3*mt = 3*173.3 = 519.9 GeV
 set muf_ref_fixed 519.9
 set mur_over_ref 1.0
@@ -133,15 +137,69 @@ time $MG -f ${OUTDIR}.cmd
 
 date
 
+done
+done
+
 ### results should be the following:
+## NLO, HT/2:
 #   --------------------------------------------------------------
-#      Final results and run summary:
+#      Summary:
 #      Process p p > t t~ t~ j [QCD]
 #      Run at p-p collider (6500.0 + 6500.0 GeV)
-#      Total cross section: 2.036e-04 +- 5.7e-07 pb
+#      Number of events generated: 10000
+#      Total cross section: 2.023e-04 +- 7.9e-07 pb
 #   --------------------------------------------------------------
-#      Scale variation (computed from histogram information):
-#          Dynamical_scale_choice -1 (envelope of 9 values): 
-#              2.039e-04 pb  +16.5% -13.0%
+#      Scale variation (computed from LHE events):
+#          Dynamical_scale_choice 3 (envelope of 9 values): 
+#              2.028e-04 pb  +13.3% -11.0%
+#      PDF variation (computed from LHE events):
+#          NNPDF23_nlo_as_0118_qed (101 members; using replicas method): 
+#              2.027e-04 pb  +2.2% -2.2%
 #   --------------------------------------------------------------
+## LO, HT/2
+#   --------------------------------------------------------------
+#      Summary:
+#      Process p p > t t~ t~ j [QCD]
+#      Run at p-p collider (6500.0 + 6500.0 GeV)
+#      Number of events generated: 10000
+#      Total cross section: 1.134e-04 +- 2.0e-07 pb
+#   --------------------------------------------------------------
+#      Scale variation (computed from LHE events):
+#          Dynamical_scale_choice 3 (envelope of 9 values):
+#              1.134e-04 pb  +19.2% -15.8%
+#      PDF variation (computed from LHE events):
+#          NNPDF23_nlo_as_0118_qed (101 members; using replicas method):
+#              1.134e-04 pb  +2.3% -2.3%
+#   --------------------------------------------------------------
+## NLO, 3mt
+#   --------------------------------------------------------------
+#      Summary:
+#      Process p p > t t~ t~ j [QCD]
+#      Run at p-p collider (6500.0 + 6500.0 GeV)
+#      Number of events generated: 10000
+#      Total cross section: 2.050e-04 +- 8.2e-07 pb
+#   --------------------------------------------------------------
+#      Scale variation (computed from LHE events):
+#          Dynamical_scale_choice 0 (envelope of 9 values):
+#              2.044e-04 pb  +14.4% -11.6%
+#      PDF variation (computed from LHE events):
+#          NNPDF23_nlo_as_0118_qed (101 members; using replicas method):
+#              2.044e-04 pb  +2.6% -2.6%
+#   --------------------------------------------------------------
+## LO, 3mt
+#   --------------------------------------------------------------
+#      Summary:
+#      Process p p > t t~ t~ j [QCD]
+#      Run at p-p collider (6500.0 + 6500.0 GeV)
+#      Number of events generated: 10000
+#      Total cross section: 1.096e-04 +- 2.0e-07 pb
+#   --------------------------------------------------------------
+#      Scale variation (computed from LHE events):
+#          Dynamical_scale_choice 0 (envelope of 9 values):
+#              1.096e-04 pb  +19.4% -15.8%
+#      PDF variation (computed from LHE events):
+#          NNPDF23_nlo_as_0118_qed (101 members; using replicas method):
+#              1.096e-04 pb  +2.3% -2.3%
+#   --------------------------------------------------------------
+
 

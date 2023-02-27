@@ -29,9 +29,10 @@ echo "--- Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 ### get model
 MODEL=loop_qcd_qed_sm-with_b_mass
 
+for FIXEDSCALE in False True ; do
+
 
 ### generate
-date
 echo "set auto_convert_model T          # convert model to python3 automatically
 import model ${MODEL}
 set complex_mass_scheme True            # not actually needed if resonance width hardcoded
@@ -39,8 +40,11 @@ generate p p > t t t~ b~ j
 output ${OUTDIR}
 y# just in case some installation or overwritting is needed
 " > ${OUTDIR}.cmd
-time $MG -f ${OUTDIR}.cmd
-
+if [[ ! -d "${OUTDIR}" ]] ; then
+	date
+	echo "--- Generate and output"
+	time $MG -f ${OUTDIR}.cmd
+fi
 
 
 ### launch
@@ -62,8 +66,8 @@ set lhaid 244600
 set WW   0.  # 2.084650                  # irrelevant at LO
 set WT   0.  # 1.36728
 set dynamical_scale_choice 3             # -1 and 3 are the same at MG5_aMC but not in MG5_LO
-set fixed_ren_scale False                # those two actually determine fixed vs dyn scale
-set fixed_fac_scale False                # those two actually determine fixed vs dyn scale
+set fixed_ren_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
+set fixed_fac_scale $FIXEDSCALE          # those two actually determine fixed vs dyn scale
 set scale 519.9                          # 3*mt = 3*173.3 = 519.9 GeV
 set dsqrt_q2fact1 519.9
 set dsqrt_q2fact2 519.9
@@ -76,7 +80,9 @@ time $MG -f ${OUTDIR}.cmd
 
 date
 
-### results should be the following:
+done
+
+### results should be the following, for dynamical scale 3:
 #  === Results Summary for run: run_06 tag: tag_1 ===
 #     Cross-section :   0.0003013 +- 8.032e-07 pb
 #     Nb of events :  10000
