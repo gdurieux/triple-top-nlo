@@ -1,6 +1,6 @@
 ### Triple top-quark production at NLO in QCD ###
 
-Bash scripts to compute triple top-quark production (tttj and tttw) at NLO in QCD with MG5_aMC
+Bash scripts to compute triple top-quark production (tttj and tttw) at NLO in QCD with MG5_aMC (orders αS³α² and αS⁴α, respectively)
 
 The fact ttt(w>jj) looks just like an extra parton emission from tttj, and that ttt(t>bw) looks just like an extra parton emission from tttw, demands a substraction scheme at NLO in the five flavour scheme (5FS) and already at LO in the 4FS for tttw.
 
@@ -23,7 +23,7 @@ For tttbarW-, use the two gen_tttwm*.sh scripts instead.
 
 Scripts are also also provided to run ttbartbarj (gen_tttjp.sh) and ttbartbarW+ (gen_tttwp.sh) at NLO in the 5FS.
 
-Numerical results for the four processes in 13 TeV pp collisions, with factor-of-two variations around a HT/2 dynamical scale, are (see also sample outputs at the end of each script file, PDF uncertainties are from NNPDF23_nlo_as_0118 replicas):
+Numerical results for the four processes in 13 TeV pp collisions, with factor-of-two variations around a HT/2 dynamical scale, are given below (see also sample outputs at the end of each script file, PDF uncertainties are from NNPDF23_nlo_as_0118 replicas). The LO numbers only include terms of O(αS²α²) for tttj and O(αS³α) for tttw, and NLO only increments the power of αS.
 
 tttjm:
 	NLO: 0.44  fb +13% -11% (scale) +1.6% -1.6% (pdf)
