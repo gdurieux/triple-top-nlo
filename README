@@ -1,14 +1,14 @@
 ### Triple top-quark production at NLO in QCD ###
 
-Bash scripts to compute triple top-quark production (tttj and tttw) at NLO in QCD with MG5_aMC
+Bash scripts to compute triple top-quark production (tttj and tttw) at NLO in QCD with MG5_aMC (orders αS³α² and αS⁴α, respectively)
 
 The fact ttt(w>jj) looks just like an extra parton emission from tttj, and that ttt(t>bw) looks just like an extra parton emission from tttw, demands a substraction scheme at NLO in the five flavour scheme (5FS) and already at LO in the 4FS for tttw.
 
-So-called DR1 "diagram removal" is implemented for this purpose, by removing unwanted resonant diagrams from the set of real radiations, though specific patches of the MG5_aMC outputs.
+So-called DR1 "diagram removal" is implemented for this purpose, by removing unwanted resonant diagrams from the set of real radiations, through specific patches of the MG5_aMC outputs.
 
 The 5FS is adopted for NLO computations. At LO, the 4FS is also amenable and used for comparison.
 
-Plots are provided as examples, displaying scale variation for two different central choices (HT/2 and sum[masses]), in 13 TeV pp collisions.
+Plots are provided as examples, displaying scale variation for two different central choices (HT/2 and sum[masses]), in 13 TeV pp collisions. The same NNPDF23_nlo_as_0118 set is used for all LO and NLO results shown.
 
 Prerequisites:
 - MG5_aMC_v3.4.1, lhapdf6, and their dependencies (see scripts for commented out installation code)
@@ -17,26 +17,35 @@ Prerequisites:
 To produce the tttbarj plots:
 - gen_tttjm.sh will run NLO and LO for both choices of scales,
 - gen_tttjm_4fs_lo.sh will run LO 4FS for both choices of scales,
-- read_syslog.py <output-file-name> <NLO-sys-log> <LO-sys-log> [<LO-4FS-sys-log>] will produce a plot from the <run-directory>/Events/<run-name>/parton_systematics.log files. When <LO-4FS-sys-log> is provided, the corresponding scale variation (more diagonal) is superimposed together with that of <LO-sys-log> (more horizontal) in the first plot panel.
+- read_syslog.py <output-file-name> <NLO-sys-log> <LO-sys-log> [<LO-4FS-sys-log>] will produce a plot from the <run-directory>/Events/<run-name>/parton_systematics.log files. When <LO-4FS-sys-log> is provided, the corresponding scale variation (more diagonal) is superimposed together with that of <LO-sys-log> (more horizontal) in the first plot panel. The contours show 20% steps up and down from the central point.
+- read_syslog_scalepdf.py <sys-log-files> will print out the factor-of-two scale variation along muR=muF and PDF uncertainties.
 
-For tttbarW-, use the two gen_tttwm*.sh scripts instead.
+For tttbarW-, use the gen_tttwm.sh and gen_tttwm_4fs_lo.sh scripts instead.
 
-Scripts are also also provided to run ttbartbarj (gen_tttjp.sh) and ttbartbarW+ (gen_tttwp.sh) at NLO in the 5FS.
+Scripts are also also provided to run ttbartbarj (gen_tttjp.sh) and ttbartbarW+ (gen_tttwp.sh) at NLO in the 5FS, and to obtain formally subleading LO EW contributions (gen_ttt*_lox.sh).
 
-Numerical results for the four processes in 13 TeV pp collisions, with factor-of-two variations around a HT/2 dynamical scale are (see also sample outputs at the end of each script file, PDF uncertainties are from NNPDF23_nlo_as_0118 replicas):
+Numerical results for the four processes in 13 TeV pp collisions, with factor-of-two variations around HT/2 dynamical renormalisation and factorisation scales, are given below (see also sample outputs at the end of each script file). PDF uncertainties are from NNPDF23_nlo_as_0118 replicas. The LO1 numbers only include terms of O(αS²α²) for tttj and O(αS³α) for tttw, and NLO1 only increments the power of αS. The LO(x+1) order trades one power of αS for one power of α with, respect to the LOx order.
 
 tttjm:
-	NLO: 0.44  fb +13% -11% (scale) +1.6% -1.6% (pdf)
-	LO : 0.24  fb +20% -16% (scale) +1.5% -1.5% (pdf)
+	NLO1: 0.44  fb +13%   -11%  (scales) +-1.6% (pdf)
+	LO1:  0.24  fb +20%   -16%  (scales) +-1.5% (pdf)
+	LO2: -0.19  fb +0.7%  -1.8% (scales) +-2%   (pdf)
+	LO3:  0.24  fb +0.3%  -1.6% (scales) +-2.3% (pdf)
 tttjp:
-	NLO: 0.2   fb +13% -11% (scale) +2.2% -2.2% (pdf)
-	LO : 0.11  fb +19% -16% (scale) +2.3% -2.3% (pdf)
+	NLO1: 0.2   fb +13%   -11%  (scales) +-2.2% (pdf)
+	LO1:  0.11  fb +19%   -16%  (scales) +-2.3% (pdf)
+	LO2: -0.088 fb +0.44% -1.6% (scales) +-2.9% (pdf)
+	LO3:  0.098 fb +0.11% -1.4% (scales) +-3.2% (pdf)
 tttwm:
-	NLO: 0.52  fb +14% -14% (scale) +8.1% -8.1% (pdf)
-	LO : 0.29  fb +33% -24% (scale) +7.6% -7.6% (pdf)
+	NLO1: 0.52  fb +14%   -14%  (scales) +-8.1% (pdf)
+	LO1:  0.29  fb +33%   -24%  (scales) +-7.6% (pdf)
+	LO2: -0.19  fb +17%   -15%  (scales) +-11%  (pdf)
+	LO3:  0.33  fb +14%   -12%  (scales) +-7.5% (pdf)
 tttwp:
-	NLO: 0.52  fb +15% -15% (scale)  +10%  -10% (pdf)
-	LO : 0.29  fb +33% -24% (scale) +7.6% -7.6% (pdf)
+	NLO1: 0.52  fb +15%   -15%  (scales) +-10%  (pdf)
+	LO1:  0.29  fb +33%   -24%  (scales) +-7.6% (pdf)
+	LO2: -0.19  fb +17%   -15%  (scales) +-12%  (pdf)
+	LO3:  0.33  fb +14%   -12%  (scales) +-7.6% (pdf)
 
 Contact: Gauthier Durieux
 DOI: https://doi.org/10.5281/zenodo.7682519

@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
-OUTDIR=gen_tttjm_4fs_lo
+for LO in 1 2 3; do
+
+OUTDIR=gen_tttjm_lo$LO
 exec >> ${OUTDIR}.log  2>&1
 
 # need to specify python3.8 for CS8, while CS9 has python3.9 as default already
@@ -27,7 +29,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/tools/mg5amcnlo/HEPTools/lhapdf6_p
 echo "--- Using LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
 
 ### get model
-MODEL=loop_qcd_qed_sm-with_b_mass
+MODEL=loop_qcd_qed_sm                   # should automatically use 5FS
 
 for FIXEDSCALE in False True ; do
 
@@ -36,7 +38,7 @@ for FIXEDSCALE in False True ; do
 echo "set auto_convert_model T          # convert model to python3 automatically
 import model ${MODEL}
 set complex_mass_scheme True            # not actually needed if resonance width hardcoded
-generate p p > t t t~ b~ j
+generate p p > t t t~ j  QED=4 QCD=2 QED^2==$(( 2 + 2*$LO )) QCD^2==$(( 6 - 2*$LO ))
 output ${OUTDIR}
 y# just in case some installation or overwritting is needed
 " > ${OUTDIR}.cmd
@@ -55,7 +57,7 @@ set aEWM1 1.289300e+02
 set MZ 9.118800e+01
 set MW 8.041900e+01
 set MT 173.3
-set MB 4.7
+# set MB 4.7                             # invalid for 5FS
 set ptj 10.
 set ptb 0.
 set etaj -1.
@@ -82,13 +84,4 @@ date
 
 done
 
-### results should be the following, for dynamical scale 3:
-#  === Results Summary for run: run_06 tag: tag_1 ===
-#     Cross-section :   0.0003013 +- 8.032e-07 pb
-#     Nb of events :  10000
-#INFO: # Events generated with PDF: NNPDF23_nlo_as_0118_qed (244600) 
-#INFO: # Will Compute 624 weights per event. 
-#INFO: #***************************************************************************
-## original cross-section: 0.00030086401879635
-##     scale variation: +222% -59.3%
-
+done

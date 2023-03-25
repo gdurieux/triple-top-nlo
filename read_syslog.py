@@ -71,9 +71,9 @@ def show(Z,shift=0,show=True,subs=True,fs=''):
     if show:
         plt.show()
 
-def read_syslog(dat):
+def read_syslog(dat,pdf=244600):
     val = [list(map(float,re.findall('[0-9+-e]+',line))) for line in dat.split('\n') if len(line)>1 and line[0]!="#"]
-    dic = {(line[0],line[1]):line[5] for line in val}
+    dic = {(line[0],line[1]):line[5] for line in val if line[4]==pdf}
     x = sorted(list(set(np.array(val)[:,0])))
     y = sorted(list(set(np.array(val)[:,1])))
     w = [[dic[xx,yy] for yy in y] for xx in x]
