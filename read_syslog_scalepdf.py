@@ -19,7 +19,7 @@ def printout(dic):
     pdfsets.pop(pdfsets.index(mainpdf))
     pdfvars  = 1e3*np.array([dic[1.,1.,pdf] for pdf in pdfsets])
 
-    print('\t{:<5.2g} fb {:+.2g}% {:+.2g}% (scale) +-{:.2g}% (pdf)'.format(
+    print('\t{:<5.2g} fb {:+.2g}% {:+.2g}% (scales) +-{:.2g}% (pdf)'.format(
         var[2], *list((var[:2]/var[2]-1)*100),
         np.abs(np.std(pdfvars-var[2])/var[2]*100) if len(pdfvars)>0 else np.nan
         ))
