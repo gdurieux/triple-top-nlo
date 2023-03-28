@@ -1,35 +1,43 @@
 #!/usr/bin/python3
 
 import numpy as np
-import matplotlib.pyplot as plt
 import re, sys
 
-def printit(Z):
-    for i,(x,y,z,p) in enumerate(Z[::-1]):
-        if x!=y:
-            raise()
-        v = list(np.log(x)/np.log(2))
-        w = 1e3*np.array([z[i,i] for i in range(len(z[0]))])
-        var = np.interp([-1,+1., 0.0],v,w)
-        p *= 1e3
-        print('\t{:<5.2g} fb {:+.2g}% {:+.2g}% (scale) +-{:.2g}% (pdf)'.format(
-            var[2], *list((var[:2]/var[2]-1)*100),
-            np.abs(np.std(p-var[2])/var[2]*100)
-            ))
+def printout(dic):
 
-def read_syslog(dat,pdf=244600):
-    val = [list(map(float,re.findall('[0-9+-e]+',line))) for line in dat.split('\n') if len(line)>1 and line[0]!="#"]
-    dic = {(line[0],line[1]):line[5] for line in val if line[4]==pdf}
-    x = sorted(list(set(np.array(val)[:,0])))
-    y = sorted(list(set(np.array(val)[:,1])))
-    w = [[dic[xx,yy] for yy in y] for xx in x]
-    pdfs = [line[5] for line in val if line[0]==1 and line[1]==1]
-    return([[x,y,np.array(w),np.array(pdfs)]])
+    scales   = list(sorted(set(key[0] for key in dic)))
+    allpdfs  = [key[2] for key in dic]
+    pdfsets  = list(sorted(set(allpdfs)))
+    pdfcount = [len([1 for item in allpdfs if item==pdf]) for pdf in pdfsets]
+    mainpdf  = pdfsets[np.argmax(pdfcount)]
+    
+    # give scale variation along the muR=muF line
+    shift    = 0.
+    xsecs    = 1e3*np.array([dic[scale,scale,mainpdf] for scale in scales])
+    var      = np.interp([shift-1,shift+1., shift],np.log2(scales),xsecs)
 
+    pdfsets.pop(pdfsets.index(mainpdf))
+    pdfvars  = 1e3*np.array([dic[1.,1.,pdf] for pdf in pdfsets])
 
-Z   = []
+    print('\t{:<5.2g} fb {:+.2g}% {:+.2g}% (scale) +-{:.2g}% (pdf)'.format(
+        var[2], *list((var[:2]/var[2]-1)*100),
+        np.abs(np.std(pdfvars-var[2])/var[2]*100) if len(pdfvars)>0 else np.nan
+        ))
+
+dics = []
 for dat in sys.argv[1:]:
     print(dat)
     with open(dat) as f:
-        Z = read_syslog(f.read())
-    printit(Z)
+        dat = f.read()
+    val = [list(map(float,re.findall('[0-9+-e]+',line))) for line in dat.split('\n') if len(line)>1 and line[0]!="#"]
+    dic = {(line[0],line[1],line[4]):line[5] for line in val}
+    printout(dic)
+    dics.append(dic)
+
+
+sumdic = {}
+for key in dics[0]:
+    sumdic[key] = np.sum( dic[key] for dic in dics )
+print('sum:')
+printout(sumdic)
+
